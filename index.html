@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Human 2.0: Sub-Archetype Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #1a1a1a;
+            --accent: #3498db;
+            --bg: #f3f4f6;
+            --card: #ffffff;
+            --red: #e74c3c;
+            --blue: #2980b9;
+            --green: #27ae60;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h2 { margin: 0 0 20px 0; color: var(--primary); font-size: 1.4rem; font-weight: 700; }
+        .subtitle { font-size: 0.9rem; color: #666; margin-bottom: 20px; display: block;}
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            background-color: #eee;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            height: 6px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Question Buttons */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 18px 24px;
+            margin: 12px 0;
+            background: white;
+            border: 2px solid #eaecf0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            font-size: 1rem;
+            color: #444;
+            font-weight: 500;
+        }
+        .btn:hover {
+            border-color: var(--primary);
+            background: #fafafa;
+            transform: translateX(5px);
+        }
+
+        /* Results Grid */
+        #result-section { display: none; }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid #eee;
+        }
+
+        .stat-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #888; font-weight: 600; }
+        .stat-value { font-size: 1.2rem; font-weight: 800; margin-top: 5px; color: var(--primary); }
+        .stat-desc { font-size: 0.85rem; color: #666; margin-top: 5px; line-height: 1.4; }
+
+        .chart-wrapper {
+            position: relative;
+            height: 400px;
+            width: 100%;
+            margin: 30px 0;
+        }
+
+        .restart-btn {
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            border: none;
+            font-weight: 600;
+        }
+        .restart-btn:hover { background: #000; color: white; transform: none; }
+
+        @media (max-width: 600px) {
+            .results-grid { grid-template-columns: 1fr; }
+            .container { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <div id="quiz-section">
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <span class="subtitle" id="category-badge">CATEGORY</span>
+        <h2 id="question-text">Loading...</h2>
+        <div id="answers-container"></div>
+    </div>
+
+    <div id="result-section">
+        <h2 style="text-align:center;">Your Archetype Profile</h2>
+        
+        <div class="results-grid">
+            <div class="stat-card">
+                <div class="stat-label">Body Axis</div>
+                <div class="stat-value" id="res-body">Loading...</div>
+                <div class="stat-desc" id="desc-body"></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Mind Axis</div>
+                <div class="stat-value" id="res-mind">Loading...</div>
+                <div class="stat-desc" id="desc-mind"></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Vocation Axis</div>
+                <div class="stat-value" id="res-vocation">Loading...</div>
+                <div class="stat-desc" id="desc-vocation"></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Spirit Axis</div>
+                <div class="stat-value" id="res-spirit">Loading...</div>
+                <div class="stat-desc" id="desc-spirit"></div>
+            </div>
+        </div>
+
+        <div class="chart-wrapper">
+            <canvas id="archetypeChart"></canvas>
+        </div>
+        
+        <button class="btn restart-btn" onclick="location.reload()">Restart Analysis</button>
+    </div>
+
+</div>
+
+<script>
+    // --- 4 CHOICES PER QUESTION FOR GRANULARITY ---
+    // Weight 2: Deep Level 1
+    // Weight 5: Transition / Coping Level 1
+    // Weight 8: Level 2 (Status)
+    // Weight 12: Level 3 (Autonomy)
+
+    const questions = [
+        // --- AXIS 1: BODY (Incel -> Chad -> Sigma) ---
+        {
+            category: "Body",
+            question: "You catch a glimpse of yourself in a shop window. What's the instant reaction?",
+            answers: [
+                { text: "I look away quickly. I hate how I look.", weight: 2 }, // Incel
+                { text: "I suck in my gut and fix my posture hoping no one saw.", weight: 5 }, // Incel/Trans
+                { text: "I check my reflection to admire the fit/gains.", weight: 8 }, // Chad
+                { text: "I notice my posture is good, but I don't linger. I'm busy.", weight: 12 } // Sigma
+            ]
+        },
+        {
+            category: "Body",
+            question: "Gym culture. What's your take?",
+            answers: [
+                { text: "It's for meatheads. I'd rather play video games.", weight: 2 },
+                { text: "I go because I have to, but I feel intimidated by the big guys.", weight: 5 },
+                { text: "It's my church. I need to be bigger/stronger than everyone.", weight: 8 },
+                { text: "It's simply maintenance for my vehicle. Efficiency over ego.", weight: 12 }
+            ]
+        },
+        {
+            category: "Body",
+            question: "Diet and consumption.",
+            answers: [
+                { text: "Mountain Dew and tendies. Or just whatever is cheap.", weight: 2 },
+                { text: "I try diets but always fail and binge eat later.", weight: 5 },
+                { text: "Chicken, broccoli, rice. Gotta hit those macros for the aesthetic.", weight: 8 },
+                { text: "Bio-available whole foods. I eat for cognitive energy.", weight: 12 }
+            ]
+        },
+        {
+            category: "Body",
+            question: "Eye contact with strangers.",
+            answers: [
+                { text: "Avoid at all costs. I look at the floor.", weight: 2 },
+                { text: "I look until they look at me, then I look away nervously.", weight: 5 },
+                { text: "I stare them down to establish dominance.", weight: 8 },
+                { text: "Relaxed, unwavering, but not aggressive.", weight: 12 }
+            ]
+        },
+
+        // --- AXIS 2: MIND (NPC -> Player -> Creator) ---
+        {
+            category: "Mind",
+            question: "A new AI tool comes out that threatens your job.",
+            answers: [
+                { text: "Ignore it and hope it goes away.", weight: 2 }, // NPC
+                { text: "Panic and complain on Twitter that it should be banned.", weight: 5 }, // NPC/Trans
+                { text: "Learn it immediately so I can use it to work faster than my coworkers.", weight: 8 }, // Player
+                { text: "Figure out how to build a business ON TOP of it.", weight: 12 } // Creator
+            ]
+        },
+        {
+            category: "Mind",
+            question: "How do you consume content (TikTok/YouTube)?",
+            answers: [
+                { text: "Mindless scrolling for hours until my brain rots.", weight: 2 },
+                { text: "I watch self-help videos but never actually do what they say.", weight: 5 },
+                { text: "I listen to podcasts at 2x speed to 'optimize' my learning.", weight: 8 },
+                { text: "I create content or curate strictly for specific information I need.", weight: 12 }
+            ]
+        },
+        {
+            category: "Mind",
+            question: "Problem Solving approach.",
+            answers: [
+                { text: "I ask my boss or teacher what to do.", weight: 2 },
+                { text: "I Google the answer and copy-paste it.", weight: 5 },
+                { text: "I find a loophole in the rules to get the result.", weight: 8 },
+                { text: "I deconstruct the problem and build a new solution from scratch.", weight: 12 }
+            ]
+        },
+        {
+            category: "Mind",
+            question: "Social Dynamics.",
+            answers: [
+                { text: "I just say what I think people want to hear.", weight: 2 },
+                { text: "I get awkward and say the wrong things.", weight: 5 },
+                { text: "I read '48 Laws of Power' and try to manipulate the frame.", weight: 8 },
+                { text: "I am authentic. I don't need to play games.", weight: 12 }
+            ]
+        },
+
+        // --- AXIS 3: VOCATION (9-5/Job -> Career -> Calling) ---
+        {
+            category: "Vocation",
+            question: "It's Monday morning.",
+            answers: [
+                { text: "Dread. Pure dread.", weight: 2 }, // Job
+                { text: "I'm tired, but I need the money.", weight: 5 }, // Job/Trans
+                { text: "I'm ready to crush it and impress the VP.", weight: 8 }, // Career
+                { text: "I'm excited to continue the work I started yesterday.", weight: 12 } // Calling
+            ]
+        },
+        {
+            category: "Vocation",
+            question: "Financial Strategy.",
+            answers: [
+                { text: "Paycheck to paycheck. The system is rigged.", weight: 2 },
+                { text: "I save a little bit in a savings account.", weight: 5 },
+                { text: "Max out 401k, invest in ETFs, climb the ladder.", weight: 8 },
+                { text: "Build equity, own assets, create multiple income streams.", weight: 12 }
+            ]
+        },
+        {
+            category: "Vocation",
+            question: "Definition of 'Work'.",
+            answers: [
+                { text: "Selling my time for survival.", weight: 2 },
+                { text: "A necessary evil to fund my weekends.", weight: 5 },
+                { text: "A path to status, power, and a better title.", weight: 8 },
+                { text: "The manifestation of my will and creativity.", weight: 12 }
+            ]
+        },
+        {
+            category: "Vocation",
+            question: "Your boss asks you to stay late.",
+            answers: [
+                { text: "I say yes but complain about it in my head.", weight: 2 },
+                { text: "I make up a lie about why I can't.", weight: 5 },
+                { text: "I stay late and make sure everyone sees me doing it.", weight: 8 },
+                { text: "If it aligns with the mission, yes. If not, I set a boundary.", weight: 12 }
+            ]
+        },
+
+        // --- AXIS 4: SPIRIT (Conformist -> Atheist/Free -> Mystic) ---
+        {
+            category: "Spirit",
+            question: "Views on 'The Truth'.",
+            answers: [
+                { text: "The Truth is whatever the News or my Pastor says it is.", weight: 2 }, // Conformist
+                { text: "I'm not sure, I'm just trying to be a good person.", weight: 5 }, // Conf/Trans
+                { text: "Truth is science. If I can't measure it, it's not real.", weight: 8 }, // Atheist/Free
+                { text: "Truth is found through direct experience and inner silence.", weight: 12 } // Mystic
+            ]
+        },
+        {
+            category: "Spirit",
+            question: "When bad things happen to you...",
+            answers: [
+                { text: "Why me? God/Universe hates me.", weight: 2 },
+                { text: "It's just bad luck.", weight: 5 },
+                { text: "I analyze the probability and logic of why it happened.", weight: 8 },
+                { text: "I accept it as necessary friction for my character arc.", weight: 12 }
+            ]
+        },
+        {
+            category: "Spirit",
+            question: "Relationship with Authority.",
+            answers: [
+                { text: "Obey. Deviance is dangerous.", weight: 2 },
+                { text: "Skeptical, but I follow the rules to stay safe.", weight: 5 },
+                { text: "I debate and challenge authority using logic.", weight: 8 },
+                { text: "I recognize no authority over my own consciousness.", weight: 12 }
+            ]
+        },
+        {
+            category: "Spirit",
+            question: "Meaning of Life.",
+            answers: [
+                { text: "To follow the script and not sin.", weight: 2 },
+                { text: "To have fun and be happy.", weight: 5 },
+                { text: "To maximize utility and contribute to society.", weight: 8 },
+                { text: "To self-actualize and understand the nature of reality.", weight: 12 }
+            ]
+        }
+    ];
+
+    let currentIdx = 0;
+    let totals = { Body: 0, Mind: 0, Vocation: 0, Spirit: 0 };
+    let counts = { Body: 0, Mind: 0, Vocation: 0, Spirit: 0 };
+
+    function loadQuestion() {
+        if (currentIdx >= questions.length) {
+            showResults();
+            return;
+        }
+        const q = questions[currentIdx];
+        document.getElementById('category-badge').innerText = q.category.toUpperCase() + " AXIS";
+        document.getElementById('question-text').innerText = q.question;
+        
+        // Progress Bar
+        const pct = (currentIdx / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = `${pct}%`;
+        
+        const container = document.getElementById('answers-container');
+        container.innerHTML = '';
+        
+        q.answers.forEach(ans => {
+            const btn = document.createElement('button');
+            btn.className = 'btn';
+            btn.innerText = ans.text;
+            btn.onclick = () => {
+                totals[q.category] += ans.weight;
+                counts[q.category]++;
+                currentIdx++;
+                loadQuestion();
+            };
+            container.appendChild(btn);
+        });
+    }
+
+    // --- DETERMINE SUB-ARCHETYPES ---
+    function getLabel(category, score) {
+        // Score is average (2 to 12)
+        if (category === "Body") {
+            if (score <= 5) return { label: "INCEL / DOOMER", desc: "Disconnected from physicality. Prone to self-neglect." };
+            if (score <= 9) return { label: "CHAD", desc: "Aesthetics and status driven. Performance for others." };
+            return { label: "SIGMA", desc: "Peak functionality. Internalized validation." };
+        }
+        if (category === "Mind") {
+            if (score <= 5) return { label: "NPC", desc: "Running on auto-pilot. Consuming, not thinking." };
+            if (score <= 9) return { label: "PLAYER", desc: "Gaming the system. Strategic but within the rules." };
+            return { label: "CREATOR", desc: "Writing new code. Reality distortion field active." };
+        }
+        if (category === "Vocation") {
+            if (score <= 5) return { label: "WAGE SLAVE", desc: "Trading time for survival. Transactional mindset." };
+            if (score <= 9) return { label: "CAREERIST", desc: "Climbing the ladder. Defined by job title." };
+            return { label: "CALLING", desc: "Work is mission. Total alignment of skill and purpose." };
+        }
+        if (category === "Spirit") {
+            if (score <= 5) return { label: "CONFORMIST", desc: "Dogmatic. Relies on external scripts for truth." };
+            if (score <= 9) return { label: "RATIONALIST", desc: "Materialist. Believes only in what is measured." };
+            return { label: "MYSTIC", desc: "Direct experience. Comfortable with the unknown." };
+        }
+    }
+
+    function showResults() {
+        document.getElementById('quiz-section').style.display = 'none';
+        document.getElementById('result-section').style.display = 'block';
+
+        // Calculate Averages
+        const bScore = totals.Body / counts.Body;
+        const mScore = totals.Mind / counts.Mind;
+        const vScore = totals.Vocation / counts.Vocation;
+        const sScore = totals.Spirit / counts.Spirit;
+
+        // Get Labels
+        const bodyRes = getLabel("Body", bScore);
+        const mindRes = getLabel("Mind", mScore);
+        const vocRes = getLabel("Vocation", vScore);
+        const spiritRes = getLabel("Spirit", sScore);
+
+        // Update UI Cards
+        document.getElementById('res-body').innerText = bodyRes.label;
+        document.getElementById('desc-body').innerText = bodyRes.desc;
+        
+        document.getElementById('res-mind').innerText = mindRes.label;
+        document.getElementById('desc-mind').innerText = mindRes.desc;
+        
+        document.getElementById('res-vocation').innerText = vocRes.label;
+        document.getElementById('desc-vocation').innerText = vocRes.desc;
+        
+        document.getElementById('res-spirit').innerText = spiritRes.label;
+        document.getElementById('desc-spirit').innerText = spiritRes.desc;
+
+        renderChart(bScore, mScore, vScore, sScore);
+    }
+
+    function renderChart(b, m, v, s) {
+        const ctx = document.getElementById('archetypeChart').getContext('2d');
+
+        // Background Plugin (Red/Blue/Green Rings)
+        const backgroundCircles = {
+            id: 'backgroundCircles',
+            beforeDatasetsDraw(chart) {
+                const { ctx, scales: { r } } = chart;
+                const { left, right, top, bottom } = chart.chartArea;
+                const x = (left + right) / 2;
+                const y = (top + bottom) / 2;
+
+                function drawRing(radius, color) {
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(x, y, radius, 0, 2 * Math.PI);
+                    ctx.fillStyle = color;
+                    ctx.fill();
+                    ctx.restore();
+                }
+
+                // Draw from outside in
+                drawRing(r.getDistanceFromCenterForValue(12), '#e8f5e9'); // Green Zone (Light)
+                drawRing(r.getDistanceFromCenterForValue(9), '#e3f2fd');  // Blue Zone (Light)
+                drawRing(r.getDistanceFromCenterForValue(5), '#ffebee');  // Red Zone (Light)
+            }
+        };
+
+        new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['BODY', 'MIND', 'VOCATION', 'SPIRIT'],
+                datasets: [{
+                    data: [b, m, v, s],
+                    backgroundColor: 'rgba(26, 26, 26, 0.7)',
+                    borderColor: '#1a1a1a',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#1a1a1a',
+                    pointRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        min: 0,
+                        max: 12,
+                        ticks: { display: false },
+                        grid: { display: false },
+                        angleLines: { color: 'rgba(0,0,0,0.1)' },
+                        pointLabels: { font: { size: 12, weight: 'bold' } }
+                    }
+                },
+                plugins: { legend: { display: false } }
+            },
+            plugins: [backgroundCircles]
+        });
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+</html>
