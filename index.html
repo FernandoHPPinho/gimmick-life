@@ -192,30 +192,134 @@
 
 <script>
     const questions = [
-        // BODY
-        { category: "Body", question: "Your reflection in a shop window catches your eye. Your visceral reaction is:", answers: [ { text: "Avoidance. I prefer not to look.", weight: 2 }, { text: "Anxiety. I check if I look 'okay'.", weight: 5 }, { text: "Pride. I check my gains.", weight: 8 }, { text: "Neutrality. My body is a tool.", weight: 12 } ] },
-        { category: "Body", question: "Your relationship with physical exertion (Gym/Labor):", answers: [ { text: "It feels like punishment.", weight: 2 }, { text: "I do it only when I feel guilty.", weight: 5 }, { text: "It's my stage to dominate.", weight: 8 }, { text: "It's a ritual for longevity.", weight: 12 } ] },
-        { category: "Body", question: "Someone walks directly at you in a crowd.", answers: [ { text: "I shrink and move first.", weight: 2 }, { text: "I awkwardly shuffle aside.", weight: 5 }, { text: "I hold my line.", weight: 8 }, { text: "I flow through without breaking stride.", weight: 12 } ] },
-        { category: "Body", question: "Diet and fueling:", answers: [ { text: "I eat for emotional comfort.", weight: 2 }, { text: "It's chaotic and convenient.", weight: 5 }, { text: "I track macros for aesthetics.", weight: 8 }, { text: "I eat for cognitive energy.", weight: 12 } ] },
-        
-        // MIND
-        { category: "Mind", question: "4 hours of offline silence. You feel:", answers: [ { text: "Panic. I need distraction.", weight: 2 }, { text: "The itch to check notifications.", weight: 5 }, { text: "Productive. I clean/organize.", weight: 8 }, { text: "Relief. Time to think deeply.", weight: 12 } ] },
-        { category: "Mind", question: "Faced with a complex problem, you:", answers: [ { text: "Wait for instructions.", weight: 2 }, { text: "Copy what others are doing.", weight: 5 }, { text: "Find a shortcut/hack.", weight: 8 }, { text: "Deconstruct the system.", weight: 12 } ] },
-        { category: "Mind", question: "Content consumption style:", answers: [ { text: "Background noise.", weight: 2 }, { text: "Entertainment/Drama.", weight: 5 }, { text: "Hunting for tactics.", weight: 8 }, { text: "Curating and synthesizing.", weight: 12 } ] },
-        { category: "Mind", question: "In a debate you know you can win:", answers: [ { text: "I stay silent.", weight: 2 }, { text: "I get emotional.", weight: 5 }, { text: "I crush them with logic.", weight: 8 }, { text: "I state the truth once and detach.", weight: 12 } ] },
+    // --- BODY (Nuance: Vanity vs. Utility) ---
+    { 
+        category: "Body", 
+        question: "You have 30 minutes of free time. Your body craves:", 
+        answers: [ 
+            { text: "Sugar and scrolling (Dopamine hit).", weight: 2 }, 
+            { text: "A nap (Recovery).", weight: 5 }, 
+            { text: "A pump/bicep curls (Vanity).", weight: 8 }, 
+            { text: "Sprints or heavy compound lifts (Hormonal response).", weight: 12 } 
+        ] 
+    },
+    { 
+        category: "Body", 
+        question: "Your opinion on pain:", 
+        answers: [ 
+            { text: "Something to be medicated immediately.", weight: 2 }, 
+            { text: "An annoyance to my day.", weight: 5 }, 
+            { text: "Proof that I worked hard.", weight: 8 }, 
+            { text: "Information regarding my limits.", weight: 12 } 
+        ] 
+    },
+    { 
+        category: "Body", 
+        question: "A stranger insults your appearance.", 
+        answers: [ 
+            { text: "I internalize it and feel bad.", weight: 2 }, 
+            { text: "I insult them back.", weight: 5 }, 
+            { text: "I laugh, because I know I look good.", weight: 8 }, 
+            { text: "I feel nothing. A lion does not concern himself with sheep.", weight: 12 } 
+        ] 
+    },
+    
+    // --- MIND (Nuance: Consumption vs. Creation) ---
+    { 
+        category: "Mind", 
+        question: "The role of AI in your life:", 
+        answers: [ 
+            { text: "I'm scared it will replace me.", weight: 2 }, 
+            { text: "I use it to cheat on tasks.", weight: 5 }, 
+            { text: "I use it to learn faster.", weight: 8 }, 
+            { text: "I am building the systems that control it.", weight: 12 } 
+        ] 
+    },
+    { 
+        category: "Mind", 
+        question: "You fall down a 'Rabbit Hole' online. It is usually:", 
+        answers: [ 
+            { text: "Celebrity drama or gaming.", weight: 2 }, 
+            { text: "Politics / News.", weight: 5 }, 
+            { text: "Self-improvement / Tutorials.", weight: 8 }, 
+            { text: "Esoteric theory / History / Code.", weight: 12 } 
+        ] 
+    },
+    { 
+        category: "Mind", 
+        question: "When you speak, you prefer to:", 
+        answers: [ 
+            { text: "Fill the silence.", weight: 2 }, 
+            { text: "Be liked by the group.", weight: 5 }, 
+            { text: "Prove you are right.", weight: 8 }, 
+            { text: "Say less than necessary.", weight: 12 } 
+        ] 
+    },
 
-        // VOCATION
-        { category: "Vocation", question: "Motivation for work:", answers: [ { text: "Survival. I hate Mondays.", weight: 2 }, { text: "Fear of falling behind.", weight: 5 }, { text: "Status and recognition.", weight: 8 }, { text: "Mission and manifestation.", weight: 12 } ] },
-        { category: "Vocation", question: "Boss gives a senseless task:", answers: [ { text: "I just do it.", weight: 2 }, { text: "I complain but comply.", weight: 5 }, { text: "I do it to look good.", weight: 8 }, { text: "I propose a better way.", weight: 12 } ] },
-        { category: "Vocation", question: "Unexpected windfall ($10k):", answers: [ { text: "Immediate pleasure.", weight: 2 }, { text: "Save it for safety.", weight: 5 }, { text: "Buy status symbols.", weight: 8 }, { text: "Invest in freedom/assets.", weight: 12 } ] },
-        { category: "Vocation", question: "Networking view:", answers: [ { text: "I hate it.", weight: 2 }, { text: "It makes me anxious.", weight: 5 }, { text: "It's a game to win.", weight: 8 }, { text: "It's offering value.", weight: 12 } ] },
+    // --- VOCATION (Nuance: Status vs. Sovereignty) ---
+    { 
+        category: "Vocation", 
+        question: "What is 'Freedom' to you?", 
+        answers: [ 
+            { text: "Not having to work.", weight: 2 }, 
+            { text: "Safe weekends off.", weight: 5 }, 
+            { text: "Buying whatever I want.", weight: 8 }, 
+            { text: "Owning my time and the means of production.", weight: 12 } 
+        ] 
+    },
+    { 
+        category: "Vocation", 
+        question: "You spot a competitor succeeding.", 
+        answers: [ 
+            { text: "It's unfair/luck.", weight: 2 }, 
+            { text: "I get jealous.", weight: 5 }, 
+            { text: "I try to copy their method.", weight: 8 }, 
+            { text: "I analyze their leverage points.", weight: 12 } 
+        ] 
+    },
+    { 
+        category: "Vocation", 
+        question: "Your view on Hierarchies:", 
+        answers: [ 
+            { text: "They are oppressive.", weight: 2 }, 
+            { text: "A necessary evil.", weight: 5 }, 
+            { text: "A ladder to climb.", weight: 8 }, 
+            { text: "A structure to conquer or transcend.", weight: 12 } 
+        ] 
+    },
 
-        // SPIRIT
-        { category: "Spirit", question: "View on the future:", answers: [ { text: "Despair/Doomer.", weight: 2 }, { text: "Confusion/Ignorance.", weight: 5 }, { text: "Opportunity for profit.", weight: 8 }, { text: "Acceptance/Stoicism.", weight: 12 } ] },
-        { category: "Spirit", question: "Concept of Truth:", answers: [ { text: "What my community says.", weight: 2 }, { text: "I don't know anymore.", weight: 5 }, { text: "Only what is measured.", weight: 8 }, { text: "Direct experience.", weight: 12 } ] },
-        { category: "Spirit", question: "Alone in nature:", answers: [ { text: "Bored/Uneasy.", weight: 2 }, { text: "Want to take a photo.", weight: 5 }, { text: "Conquest/Peak.", weight: 8 }, { text: "Connection/Silence.", weight: 12 } ] },
-        { category: "Spirit", question: "Internal monologue after failure:", answers: [ { text: "'I'm not good enough.'", weight: 2 }, { text: "'Hope nobody saw.'", weight: 5 }, { text: "'How do I save face?'", weight: 8 }, { text: "'Lesson learned. Next.'", weight: 12 } ] }
-    ];
+    // --- SPIRIT (Nuance: Dogma vs. Direct Experience) ---
+    { 
+        category: "Spirit", 
+        question: "The concept of 'God' or the 'Universe':", 
+        answers: [ 
+            { text: "A fairy tale for weak people.", weight: 2 }, 
+            { text: "A cultural tradition I follow.", weight: 5 }, 
+            { text: "A source of personal power.", weight: 8 }, 
+            { text: "The infinite fractal I am part of.", weight: 12 } 
+        ] 
+    },
+    { 
+        category: "Spirit", 
+        question: "Suffering happens. Your interpretation:", 
+        answers: [ 
+            { text: "Why me? It's not fair.", weight: 2 }, 
+            { text: "Bad luck.", weight: 5 }, 
+            { text: "A test of my will.", weight: 8 }, 
+            { text: "The friction required for growth.", weight: 12 } 
+        ] 
+    },
+    { 
+        category: "Spirit", 
+        question: "You are alone in a dark room. No phone.", 
+        answers: [ 
+            { text: "Terrified of my thoughts.", weight: 2 }, 
+            { text: "Bored.", weight: 5 }, 
+            { text: "Planning my next move.", weight: 8 }, 
+            { text: "At total peace.", weight: 12 } 
+        ] 
+    }
+];
 
     let currentIdx = 0;
     let totals = { Body: 0, Mind: 0, Vocation: 0, Spirit: 0 };
@@ -261,56 +365,121 @@
 
     // --- DYNAMIC 81-PROFILE GENERATOR (ORIGINAL IMAGE TERMS) ---
     function generateCompositeTitle(b, m, v, s) {
+        // 1. Define Thresholds based on your weights (2, 5, 8, 12)
+        const isHigh = (val) => val >= 9.5;
+        const isMid = (val) => val >= 5.5 && val < 9.5;
+        const isLow = (val) => val < 5.5;
+    
+        // 2. Calculate the Average to detect balance
+        const avg = (b + m + v + s) / 4;
+    
+        // --- TIER 1: THE ABSOLUTES (All stats align) ---
+    
+        // The Giga-Chad (All High)
+        if (b > 10.5 && m > 10.5 && v > 10.5 && s > 10.5) {
+            return {
+                title: "The Übermensch - Human 2.0",
+                desc: "You go beyond a simple call you have optimized every vertical of existence. You don't play the game; you are the developer. Reality bends to your frame."
+            };
+        }
+    
+        // The Bloomer (All Mid-High Balanced)
+        if (avg >= 8 && Math.max(b,m,v,s) - Math.min(b,m,v,s) < 3) {
+            return {
+                title: "The Bloomer",
+                desc: "You have found the golden mean. You aren't obsessed with optimization, yet you are winning. You touch grass, you have a job, you smile. Unironically happy."
+            };
+        }
+    
+        // The Wojak / Doomer (All Low)
+        if (avg < 4.5) {
+            return {
+                title: "The True Doomer",
+                desc: "It's over. You have retreated from the physical, mental, and spiritual planes. You are merely observing the collapse from the sidelines."
+            };
+        }
+    
+        // --- TIER 2: THE TRIADS (3 High, 1 Low) ---
+    
+        // The Patrick Bateman (High Body, Mind, Vocation -> Low Spirit)
+        if (isHigh(b) && isHigh(m) && isHigh(v) && isLow(s)) {
+            return {
+                title: "The American Psycho",
+                desc: "Impeccable suit. Perfect physique. Sharp mind. But there is nothing behind the eyes. You are winning capitalism, but you have lost your soul."
+            };
+        }
+    
+        // The Monk Mode (High Body, Mind, Spirit -> Low Vocation)
+        if (isHigh(b) && isHigh(m) && isHigh(s) && isLow(v)) {
+            return {
+                title: "The Ronin",
+                desc: "You are dangerous and enlightened, but you refuse to participate in the 'rat race'. You are a master without a master. Society cannot bribe you."
+            };
+        }
+    
+        // --- TIER 3: THE DUOS (Specific High Combinations) ---
+    
+        // High Mind + High Spirit (Low Body/Vocation)
+        if (isHigh(m) && isHigh(s) && isLow(b)) {
+            return {
+                title: "The Armchair Philosopher",
+                desc: "You understand the secrets of the universe, but you get winded walking up stairs. You live entirely in the theory; reality is a disappointing DLC."
+            };
+        }
+    
+        // High Body + High Spirit (The Paladin)
+        if (isHigh(b) && isHigh(s) && isMid(m)) {
+            return {
+                title: "The Solar Crusader",
+                desc: "The 'Gym-Bros for Christ' archetype. You believe physical strength is a divine mandate. You lift heavy stones to silence the demons."
+            };
+        }
+    
+        // High Vocation + Low Spirit + Low Body
+        if (isHigh(v) && isLow(s) && isLow(b)) {
+            return {
+                title: "The Wagie Cage-Master",
+                desc: "You love the grind. You dream in spreadsheets. You have sacrificed your health and your inner peace for a 4% raise. The system loves you."
+            };
+        }
+    
+        // High Body + Low Mind
+        if (isHigh(b) && isLow(m)) {
+            return {
+                title: "The Pure Lift-Lord",
+                desc: "Head empty. Bench heavy. You are happy because you do not overthink. The iron never lies to you, and that is enough."
+            };
+        }
+    
+        // --- TIER 4: THE GENERATIVE FALLBACK (If no specific meme fits) ---
+        // (This uses your original logic but with "Darker" terms)
+        
         let scores = [
             { axis: "Body", val: b }, { axis: "Mind", val: m },
             { axis: "Vocation", val: v }, { axis: "Spirit", val: s }
         ];
-        // Sort descending
         scores.sort((x, y) => y.val - x.val);
-
         const primary = scores[0];
         const secondary = scores[1];
-
-        const getTier = (val) => {
-            if (val <= 5) return "Low";
-            if (val <= 9.5) return "Mid";
-            return "High";
-        };
-
-        const pTier = getTier(primary.val);
-        const sTier = getTier(secondary.val);
-
-        // Nouns (Primary Axis - The "Class")
+    
         const nouns = {
-            "Body": { "Low": "Incel", "Mid": "Chad", "High": "Sigma" },
-            "Mind": { "Low": "NPC", "Mid": "Player", "High": "Creator" },
-            "Vocation": { "Low": "Wage-Slave", "Mid": "Careerist", "High": "Sovereign" },
-            "Spirit": { "Low": "Believer", "Mid": "Rationalist", "High": "Mystic" }
+            "Body": "Spartan",
+            "Mind": "Architect",
+            "Vocation": "Tycoon",
+            "Spirit": "Shaman"
         };
-
-        // Adjectives (Secondary Axis - The "Modifier")
+    
         const adjectives = {
-            "Body": { "Low": "Dormant", "Mid": "Aesthetic", "High": "Sigma" },
-            "Mind": { "Low": "Scripted", "Mid": "Strategic", "High": "Visionary" },
-            "Vocation": { "Low": "Drifting", "Mid": "Ambitious", "High": "Aligned" },
-            "Spirit": { "Low": "Dogmatic", "Mid": "Empirical", "High": "Awakened" }
+            "Body": "Kinetic",
+            "Mind": "Cerebral",
+            "Vocation": "Ambitious",
+            "Spirit": "Esoteric"
         };
-
-        // Special Balanced Cases
-        if (Math.abs(primary.val - secondary.val) < 1 && primary.val > 10.5) {
-            return { title: "The Human 2.0", desc: "You have transcended categorization. High functioning across all domains, operating as a true outlier." };
-        }
-        if (Math.abs(primary.val - secondary.val) < 1 && primary.val < 5) {
-            return { title: "The Pure NPC", desc: "You are currently operating entirely on scripts. No dominant autonomous traits detected." };
-        }
-
-        const adj = adjectives[secondary.axis][sTier];
-        const noun = nouns[primary.axis][pTier];
-        
-        const finalTitle = `The ${adj} ${noun}`;
-        const desc = `Your dominant trait is ${primary.axis} (${pTier} Tier), fueled by your ${secondary.axis} (${sTier} Tier). You combine the nature of the ${noun} with the quality of being ${adj}.`;
-
-        return { title: finalTitle, desc: desc };
+    
+        return {
+            title: `The ${adjectives[secondary.axis]} ${nouns[primary.axis]}`,
+            desc: `You traverse the world primarily through ${primary.axis}, supported by your ${secondary.axis}. You haven't fully min-maxed a specific archetype yet.`
+        };
     }
 
     function getSubLabel(category, score) {
@@ -338,7 +507,20 @@
         const composite = generateCompositeTitle(bScore, mScore, vScore, sScore);
         document.getElementById('final-title').innerText = composite.title;
         document.getElementById('final-desc').innerText = composite.desc;
-
+        const titleElement = document.getElementById('final-title');
+        if(composite.title.includes("Doomer") || composite.title.includes("Wojak")) {
+            titleElement.style.background = "#2d3748"; // Grey/Black
+            titleElement.style.webkitBackgroundClip = "text";
+            titleElement.style.webkitTextFillColor = "transparent";
+        } else if (composite.title.includes("Psycho") || composite.title.includes("Wagie")) {
+            titleElement.style.background = "linear-gradient(to right, #e53e3e, #742a2a)"; // Red
+            titleElement.style.webkitBackgroundClip = "text";
+            titleElement.style.webkitTextFillColor = "transparent";
+        } else if (composite.title.includes("Giga") || composite.title.includes("Solar")) {
+            titleElement.style.background = "linear-gradient(to right, #ecc94b, #d69e2e)"; // Gold
+            titleElement.style.webkitBackgroundClip = "text";
+            titleElement.style.webkitTextFillColor = "transparent";
+        }
         renderChart(bScore, mScore, vScore, sScore);
     }
 
