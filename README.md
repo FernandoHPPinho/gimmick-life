@@ -1,1 +1,1 @@
-# archetype-life
+# gimmick-life
